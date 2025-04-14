@@ -6,8 +6,8 @@ services:
       DATABASE_URL: "host=db user=postgres password=postgres dbname=postgres sslmode=disable"
     ports:
       - "8000:8000"
-    volumes:
-      - .:/app
+    # volumes:
+    #   - .:/app
     depends_on:
       - db
   db:

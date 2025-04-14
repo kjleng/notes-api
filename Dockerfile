@@ -1,15 +1,33 @@
-FROM golang:1.24.2-alpine
+FROM golang:1.24.2-alpine AS builder
 
+# Set working directory
 WORKDIR /app
 
-COPY . . 
+# Install dependencies including make
+RUN apk add --no-cache git make
 
-RUN go get -d -v ./...
+# Copy the entire project
+COPY . .
 
-RUN go build -o api .
+# Build using make
+RUN make install
 
-#EXPOSE the port
+# Use a small alpine image for the final image
+FROM alpine:3.19
+
+# Install ca-certificates for HTTPS
+RUN apk --no-cache add ca-certificates
+
+WORKDIR /root/
+
+# Copy the binary from the builder stage
+COPY --from=builder /app/notes-api .
+
+# Copy the .env file from the builder stage
+COPY --from=builder /app/.env .
+
+# Expose the port the app runs on
 EXPOSE 8000
 
-# Run the executable
-CMD ["./api"]
+# Command to run the application
+CMD ["./notes-api"]

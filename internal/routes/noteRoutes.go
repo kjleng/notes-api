@@ -7,6 +7,6 @@ import (
 )
 
 func SetupNoteRoutes(router fiber.Router) {
-	note := router.Group("/note")
+	note := router.Group("/notes")
 	note.Get("/", handlers.GetNotes)
 }
